@@ -1,5 +1,7 @@
 const express = require("express");
+const prompt = require("./public/prompt");
 const mysql = require("mysql2");
+const cTable = require("console.table");
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -21,8 +23,11 @@ const db = mysql.createConnection(
   console.log(`Connected to the emp_tracker_db database.`)
 );
 
+// Would I use this to input data dynamically? Can I console log the entire structure (i.e. emp_tracker__db)
+console.table();
+
 // Query database
-db.query("SELECT * FROM emp_tracker_db", function (err, results) {
+db.query("SELECT * FROM id", function (err, results) {
   console.log(results);
 });
 
@@ -30,6 +35,9 @@ db.query("SELECT * FROM emp_tracker_db", function (err, results) {
 // app.use((req, res) => {
 //   res.status(404).end();
 // });
+
+// trigger prompt to prompt.js sheet
+prompt();
 
 app.listen(PORT, () => {
   console.log(`App listening at http://localhost:${PORT} 🚀`);
