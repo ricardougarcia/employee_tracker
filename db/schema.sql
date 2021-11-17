@@ -8,13 +8,13 @@ USE emp_tracker_db;
 -- Creates the table "department" within emp_tracker_db --
 CREATE TABLE department (
   -- Creates a numeric column called "id" which will automatically increment its default value as we create new rows --
-  id INT PRIMARY KEY,
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   -- Makes a string column called "name" which cannot contain null --
   name VARCHAR(30)
 );
 
 CREATE TABLE role (
-    id INT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(30),
     salary DECIMAL,
     department_id INT,
