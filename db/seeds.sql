@@ -1,6 +1,7 @@
 -- Use this file to prepopulate the database to make development of individual features much easier
 USE emp_tracker_db;
 INSERT INTO department (name)
+VALUES
 ("engineering"),
 ("engineering"),
 ("engineering"),
