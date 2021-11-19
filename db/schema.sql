@@ -60,10 +60,3 @@ VALUES
 ("cali", "fornia", 3, 5),
 ("sweet", "caroline", 2, 6),
 ("dane", "joe", 1, 7);
-
--- this appears to work in creating a table with no data
-SELECT role.title AS title, role.salary AS salary, role.id AS id, department.name AS department FROM role JOIN department ON role.department_id = department.id;
-
-
--- didnt work
-`SELECT id, title, salary, * FROM role LEFT JOIN department ON role.department_id = department.id;`

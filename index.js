@@ -7,9 +7,7 @@ const cTable = require("console.table");
 const db = mysql.createConnection(
   {
     host: "localhost",
-    // MySQL username,
     user: "root",
-    // MySQL password
     password: "mysqlabc123",
     database: "emp_tracker_db",
   },
@@ -18,19 +16,12 @@ const db = mysql.createConnection(
 
 // FUNCTIONS
 const displayDepartments = async () => {
-  console.log("I'm going to display the departments");
-  // will print array of objects as table to console. This is not departments atm.
   const results = await db.promise().query(`SELECT * FROM department`);
   console.table(results[0]);
-  // return to start prompt again
   start();
 };
 
 const displayAllRoles = () => {
-  // console.log(
-  //   "I'm going to display all job titles, role ids, the department, and salary"
-  // );
-  // this is not pulling any data?
   db.query(
     `SELECT role.title, role.salary, role.id, department.name AS department FROM role LEFT JOIN department ON role.department_id = department.id`,
     function (err, results) {
@@ -38,14 +29,12 @@ const displayAllRoles = () => {
         console.log(err);
       }
       console.table(results);
-      // return to start prompt again
       start();
     }
   );
 };
 
 const displayAllEmployees = () => {
-  // this is pulling employees but is missing department (also id is null)?
   db.query(
     `SELECT employee.first_name, employee.last_name, role.title, role.salary, department.name AS department, manager.last_name AS manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id`,
     function (err, results) {
@@ -53,20 +42,60 @@ const displayAllEmployees = () => {
         console.log(err);
       }
       console.table(results);
-      // return to start prompt again
+
       start();
     }
   );
 };
 
-const addDepartment = (userInput) => {
-  console.log(userInput);
-  // db.connect(function (err) {
-  //   if (err) throw err;
-  //   console.log("connect method working");
-  //   const add = `INSERT INTO department (name) VALUES (${userInput})`;
-  // });
+const addDepartment = async () => {
+  const { newDepartment } = await inquirer.prompt([
+    {
+      type: "input",
+      name: "newDepartment",
+      message: "What department would you like to add?",
+    },
+  ]);
+  const departmentInsert = await db
+    .promise()
+    .query(`INSERT INTO department (name) VALUES ("${newDepartment}")`);
+  start();
 };
+
+const addRole = async () => {
+  const departments = await db
+    .promise()
+    .query(`SELECT id, name FROM department`);
+
+  const newRole = await inquirer.prompt([
+    {
+      type: "input",
+      name: "role",
+      message: "What's the new role title?",
+    },
+    {
+      type: "input",
+      name: "salary",
+      message: "What's the new role salary?",
+    },
+    {
+      type: "list",
+      name: "department_id",
+      message: "Please select employee department",
+      choices: departments[0].map((department) => ({
+        name: department.name,
+        value: department.id,
+      })),
+    },
+  ]);
+  const roleInsert = await db
+    .promise()
+    .query(
+      `INSERT INTO role (title, salary, department_id) VALUES ("${newRole.role}","${newRole.salary}",${newRole.department_id})`
+    );
+  start();
+};
+
 const addEmployee = async () => {
   const roles = await db.promise().query(`SELECT id, title FROM role`);
   const managers = await db
@@ -80,22 +109,36 @@ const addEmployee = async () => {
       message: "What's their first name?",
     },
     {
+      type: "input",
+      name: "last_name",
+      message: "What's their last name?",
+    },
+    {
       type: "list",
       name: "role_id",
       message: "Please select employee role",
       choices: roles[0].map((role) => ({ name: role.title, value: role.id })),
     },
+    {
+      type: "list",
+      name: "manager_id",
+      message: "Please select employee manager ID",
+      choices: managers[0].map((manager) => ({
+        name: manager.title,
+        value: manager.id,
+      })),
+    },
   ]);
-  console.log(newEmployee);
-};
-
-const exit = () => {
-  process.kill();
+  const employeeInsert = await db
+    .promise()
+    .query(
+      `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${newEmployee.first_name}","${newEmployee.last_name}",${newEmployee.role_id},${newEmployee.manager_id})`
+    );
+  start();
 };
 
 const start = async () => {
   const { userChoice } = await inquirer.prompt([
-    /* Pass your questions in here */
     {
       type: "list",
       name: "userChoice",
@@ -105,33 +148,22 @@ const start = async () => {
         "displayAllRoles",
         "displayAllEmployees",
         "addDepartment",
+        "addRole",
         "addEmployee",
-        "exit",
       ],
     },
   ]);
   switch (userChoice) {
     case "viewAllDepartments":
       return displayDepartments();
-    case "exit":
-      return exit();
     case "displayAllRoles":
       return displayAllRoles();
     case "displayAllEmployees":
       return displayAllEmployees();
     case "addDepartment":
-      inquirer
-        .prompt([
-          {
-            type: "input",
-            name: "newDepartment",
-            message: "What department would you like to add?",
-          },
-        ])
-        .then((userInput) => {
-          addDepartment(userInput);
-        });
-    // it appears it isjumping to the default but still calling the function after the user submits
+      return addDepartment();
+    case "addRole":
+      return addRole();
     case "addEmployee":
       return addEmployee();
     default:
@@ -141,7 +173,5 @@ const start = async () => {
 
 // trigger prompt
 start();
-
-// USER INTERACTIONS
 
 module.exports = inquirer;
