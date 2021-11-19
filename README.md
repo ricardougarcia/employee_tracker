@@ -12,6 +12,6 @@ AS A business owner I WANT to be able to view and manage the departments, roles,
 
 The following video shows an example of the application being used from the command line:
 
-[![A video thumbnail shows the command-line employee management application with a play button overlaying the view.](https://2u-20.wistia.com/medias/2lnle7xnpk)
+[![A video thumbnail shows the command-line employee management application with a play button overlaying the view.](https://watch.screencastify.com/v/IU2sZc8wCVSUaTgeBC29)
 
 Ricardo Garcia [MIT] 2021
