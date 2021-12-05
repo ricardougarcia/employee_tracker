@@ -23,7 +23,7 @@ CREATE TABLE role (
 );
 
 CREATE TABLE employee (
-    id INT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(30),
     last_name VARCHAR(30),
     role_id INT,
@@ -33,10 +33,4 @@ CREATE TABLE employee (
     FOREIGN KEY (manager_id)
     REFERENCES employee(id)
     );
-
-    -- FOREIGN KEY role_id,
-    -- SELECT a.first_name,a.last_name,a.role_id,b.first_name,b.last_name,b.role_id,a.manager_id
-    -- FROM employee a, employee b
-    -- WHERE a.manager_id=b.id;
-
-
+    
